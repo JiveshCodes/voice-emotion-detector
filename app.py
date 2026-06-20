@@ -17,78 +17,112 @@ st.set_page_config(
 )
 
 # Custom Premium Styling
+# New premium styling with orange, green, grey, white theme and sharp corners
 st.markdown("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-    
-    /* Apply font to elements */
-    .stApp, div[data-baseweb="select"] {
-        font-family: 'Outfit', sans-serif !important;
-    }
-    
-    /* Header Styling */
-    .main-title {
-        font-size: 2.8rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 50%, #4D96FF 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        margin-bottom: 0.2rem;
-        padding-top: 1rem;
-    }
-    
-    .subtitle {
-        font-size: 1.15rem;
-        color: #A0AEC0;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 300;
-    }
-    
-    /* Cards & Containers */
-    .result-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 16px;
-        padding: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-        animation: fadeIn 0.6s ease-in-out;
-    }
-    
-    .emotion-badge {
-        display: inline-block;
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: #FFD93D;
-        margin: 10px 0;
-    }
-    
-    .confidence-badge {
-        font-size: 1.4rem;
-        color: #6BCB77;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-    
-    /* Sidebar Details */
-    .sidebar-header {
-        font-weight: 600;
-        font-size: 1.2rem;
-        color: #FFD93D;
-        margin-top: 1rem;
-    }
-    
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        
+        /* Global font */
+        .stApp, div[data-baseweb="select"] {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        
+        /* Background and overall layout */
+        .stApp {
+            background: #1E1E1E; /* Dark gray background */
+            color: #F8F9FA; /* Light text */
+        }
+        
+        /* Header styling */
+        .main-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B00 0%, #FFB400 60%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 0.2rem;
+            padding-top: 1rem;
+            border-radius: 0 !important;
+        }
+        .subtitle {
+            font-size: 1.15rem;
+            color: #A0AEC0;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            border-radius: 0 !important;
+        }
+        
+        /* Card / container styling – sharp corners */
+        .result-card {
+            background: #252525; /* Slightly lighter than background */
+            border: 2px solid #FF6B00; /* Orange border */
+            padding: 24px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 !important; /* Sharp corners */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        
+        .emotion-badge {
+            display: inline-block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #FF6B00; /* Orange for emotion label */
+            margin: 10px 0;
+        }
+        
+        .confidence-badge {
+            font-size: 1.4rem;
+            color: #00FF66; /* Green for confidence */
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        /* Sidebar styling */
+        .sidebar-header {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #FF6B00;
+            margin-top: 1rem;
+        }
+        
+        /* Button styling – orange background, no rounded corners */
+        .stButton button {
+            background-color: #FF6B00 !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 0 !important;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
+        .stButton button:hover {
+            background-color: #E55A00 !important;
+        }
+        
+        /* File uploader – remove default border radius */
+        div[data-testid="stFileUploader"] {
+            border: 2px dashed #FF6B00;
+            border-radius: 0 !important;
+            padding: 12px;
+            background: #2A2A2A;
+        }
+        
+        /* Chart styling – match theme */
+        .stPlotlyChart, .stChart {
+            border-radius: 0 !important;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+    </style>
 """, unsafe_allow_html=True)
 
 # Main Title Layout

@@ -1,6 +1,16 @@
-# Voice Emotion Detector 🎙️🤖
+# Voice Emotion Detector AI 🎙️🤖
 
-A complete, end-to-end Deep Learning application that predicts human emotions from voice recordings. The model extracts acoustic features using `librosa` and processes them through a multi-layer Neural Network built with `TensorFlow/Keras`. The project comes with a modern `Streamlit` user interface to record, play, and analyze voice emotions with live visualizations.
+A complete, production-quality Deep Learning web application that predicts human emotions from voice recordings. The system features a **Flask REST API** backend running local neural network model inference and a **zero-dependency, offline-first dashboard** frontend (React-like design built with HTML5, CSS3, and ES6 Javascript).
+
+---
+
+## 📸 Dashboard Preview
+
+### Dark Mode (Default)
+![Dark Mode Dashboard](./images/dark_mode.png)
+
+### Light Mode
+![Light Mode Dashboard](./images/light_mode.png)
 
 ---
 
@@ -9,20 +19,27 @@ A complete, end-to-end Deep Learning application that predicts human emotions fr
 ```text
 VoiceEmotionDetector/
 │
-├── dataset/                     # Directory for RAVDESS audio dataset (auto-downloaded)
+├── backend/                     # Python Flask API Backend
+│   ├── app.py                   # Flask server: hosts API endpoint & serves static frontend
+│   ├── predict.py               # Model inference pipeline wrapper
+│   ├── requirements.txt         # Backend pip dependencies
+│   ├── static/                  # Frontend Web Assets (100% local, no Node.js/npm)
+│   │   ├── index.html           # Main dashboard HTML structure
+│   │   ├── css/
+│   │   │   └── style.css        # Premium SaaS dashboard styles (orange, green, grey, white)
+│   │   └── js/
+│   │       └── app.js           # Reactive UI client (drag-drop, waveform drawer, history)
+│   └── uploads/                 # Temporary directory for uploaded audio samples
 │
-├── model/                       # Model artifacts folder (created after training)
+├── model/                       # Model training output artifacts
 │   ├── emotion_model.h5         # Trained Keras neural network model
-│   ├── scaler.pkl               # Fitted StandardScaler object
-│   ├── label_encoder.pkl        # Fitted LabelEncoder object
-│   ├── training_curves.png      # Training loss & accuracy plots
-│   └── confusion_matrix.png     # Evaluation confusion matrix plot
+│   ├── scaler.pkl               # StandardScaler object
+│   └── label_encoder.pkl        # LabelEncoder classes object
 │
-├── train.py                     # Main pipeline: download dataset, extract features, train and evaluate model
-├── predict.py                   # Prediction script: run inference on a single audio file via CLI
-├── app.py                       # Streamlit UI: web-based file upload, playback, and visual analytics
-├── utils.py                     # Utility functions: audio loading, feature engineering, and mappings
-├── requirements.txt             # Python dependencies
+├── train.py                     # Training script: scans data, extracts features, trains models
+├── predict.py                   # Command-line prediction script
+├── utils.py                     # Acoustic feature extraction and audio augmentation pipeline
+├── run.bat                      # Double-click startup launcher for Windows
 └── README.md                    # Project documentation (this file)
 ```
 
@@ -30,140 +47,71 @@ VoiceEmotionDetector/
 
 ## 🧠 Model Architecture & Features
 
-### 🎧 Acoustic Features (189 features total)
-We extract the following spectral, temporal, and energy features from raw audio:
-*   **MFCCs (Mel-Frequency Cepstral Coefficients)**: 40 coefficients capturing vocal tract characteristics.
-*   **Chroma Features**: 12 pitch classes representing harmonic content.
-*   **Mel Spectrogram**: 128 Mel bands capturing sound intensity across frequencies.
-*   **Spectral Contrast**: 7 bands representing sound texture and spectral peaks/valleys.
-*   **Zero Crossing Rate (ZCR)**: 1 feature measuring how rapidly the signal changes sign (indicator of noise/voiceless sounds).
-*   **RMS Energy**: 1 feature capturing root-mean-square amplitude (loudness/energy).
+### 🎧 Acoustic Features (384 features total)
+We extract both the **Mean** and **Standard Deviation (Std)** for:
+1.  **MFCCs (Mel-Frequency Cepstral Coefficients)**: 40 coefficients capturing vocal tract shapes (80 features).
+2.  **Chroma Features**: 12 pitch classes representing harmonic content (24 features).
+3.  **Mel Spectrogram**: 128 Mel bands capturing sound intensity across frequencies (256 features).
+4.  **Spectral Contrast**: 7 bands representing sound texture and spectral peaks (14 features).
+5.  **Zero Crossing Rate (ZCR)**: Temporal indicator of noise/voiceless sounds (2 features).
+6.  **RMS Energy**: Volume/amplitude energy (2 features).
+7.  **Spectral Centroid**: Sound brightness center of mass (2 features).
+8.  **Spectral Rolloff**: High-frequency rolloff threshold (2 features).
+9.  **Spectral Bandwidth**: Spectral spread width (2 features).
 
 ### 🕸️ Neural Network Design
 The network uses the following sequential architecture:
-1.  **Input Layer**: Dense (256 units, ReLU activation, shape=189)
-2.  **Batch Normalization & Dropout (30%)**: For stabilization and regularization
-3.  **Hidden Layer 1**: Dense (128 units, ReLU activation)
-4.  **Batch Normalization & Dropout (30%)**: Further generalization defense
-5.  **Hidden Layer 2**: Dense (64 units, ReLU activation)
-6.  **Output Layer**: Dense (8 units, Softmax activation) for multi-class probability output.
+1.  **Input Layer**: Dense (512 units, ReLU activation, shape=384)
+2.  **Batch Normalization & Dropout (40%)**: For regularization
+3.  **Hidden Layer 1**: Dense (256 units, ReLU) + Batch Normalization + Dropout (40%)
+4.  **Hidden Layer 2**: Dense (128 units, ReLU) + Batch Normalization + Dropout (30%)
+5.  **Hidden Layer 3**: Dense (64 units, ReLU) + Batch Normalization + Dropout (20%)
+6.  **Output Layer**: Dense (10 units, Softmax activation) representing 10 emotions (RAVDESS + Crying + Laughing).
 
-*   **Loss Function**: `sparse_categorical_crossentropy`
-*   **Optimizer**: `adam`
-*   **Callbacks**: `EarlyStopping` (patience=20), `ModelCheckpoint` (saves best model), `ReduceLROnPlateau` (halves learning rate on validation plateau).
+---
+
+## ⚡ Offline-First UX Features
+
+*   **SoundCloud-style Waveform Visualizer**: Leverages the browser's native `AudioContext` to decode audio binary data locally and render real-time waveforms on an HTML5 `<canvas>` (works 100% offline).
+*   **Acoustic Probability Analytics**: Custom responsive horizontal progress bars displaying sorted percentage distributions for all emotions.
+*   **Recent Prediction Logs**: Remembers your last 5 voice analyses in `localStorage`. You can reload them instantly by clicking them.
+*   **Theme Toggle**: Easily switch between the premium Dark theme and a clean Light theme.
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Prerequisites & Installation
-Ensure you have Python 3.8 to 3.11 installed. Create a virtual environment (recommended) and install the dependencies:
+### 1. Prerequisites
+Ensure you have **Python 3.8 to 3.11** installed on your Windows machine. No Node.js or `npm` installations are needed.
 
-```bash
-# Clone or navigate to the directory
-cd VoiceEmotionDetector
+### 2. Environment Installation
+Run the following commands inside your command prompt or PowerShell in the project directory:
 
-# Install dependencies
-pip install -r requirements.txt
+```powershell
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+.\venv\Scripts\activate
+
+# Install backend dependencies
+pip install -r backend/requirements.txt
 ```
 
-### 2. Dataset Setup
-The project uses the **RAVDESS Speech Emotion Dataset** (Ryerson Audio-Visual Database of Emotional Speech and Song) featuring 8 core emotions:
-`Neutral`, `Calm`, `Happy`, `Sad`, `Angry`, `Fearful`, `Disgust`, and `Surprised`.
-
-*   **Automatic Setup (Recommended)**: The `train.py` script checks if the dataset is present. If not, it will automatically download the 248MB dataset from Zenodo and extract it directly into the `dataset/` folder.
-*   **Manual Setup**: Download `Audio_Speech_Actors_01-24.zip` from Zenodo, extract it, and place the 24 folders (`Actor_01` to `Actor_24`) inside the `dataset/` directory.
-
-### 3. Model Training & Evaluation
-To run feature extraction, train the neural network, and generate metric visualizations:
-
-```bash
+### 3. Model Training
+If you have not trained the model yet, run the main training script to download raw audio assets and export the trained model structure:
+```powershell
 python train.py
 ```
-This script will:
-1.  Verify/download the RAVDESS dataset.
-2.  Extract 189 features from all 1440 audio clips.
-3.  Split, scale, and encode the data.
-4.  Train the model and save artifacts to `model/`.
-5.  Print evaluation statistics: accuracy, precision, recall, F1 score, confusion matrix, and a classification report.
-6.  Export learning curves and confusion matrix charts to `model/`.
 
 ### 4. Running the Web Application
-Launch the responsive Streamlit user interface to run predictions on audio recordings:
-
-```bash
-streamlit run app.py
-```
-Open the provided browser link (usually `http://localhost:8501`). Drag and drop or upload any `.wav` audio recording, review playback, and click **Analyze Emotion** to see:
-*   The predicted emotion accompanied by its emotional emoji.
-*   The model's classification confidence.
-*   An interactive visual probability distribution of all emotions.
-
-### 5. CLI Single Inference (Optional)
-To test prediction directly from your command-line interface:
-
-```bash
-python predict.py <path_to_audio_file.wav>
-```
+Simply **double-click the `run.bat` file** at the project root. This launcher script will:
+1.  Activate your virtual environment.
+2.  Launch the local Flask server on `http://127.0.0.1:5000`.
+3.  Automatically open your default web browser to the dashboard.
 
 ---
 
-## 📈 Example Output
-
-### Command Line Evaluation
-When `train.py` completes, it outputs performance summaries like:
-```text
-========================================
-          EVALUATION RESULTS          
-========================================
-Accuracy:                  81.25%
-Precision (Weighted):      81.94%
-Recall (Weighted):         81.25%
-F1 Score (Weighted):       80.98%
-========================================
-
-Classification Report:
-              precision    recall  f1-score   support
-
-       angry       0.85      0.82      0.84        38
-        calm       0.89      0.87      0.88        38
-     disgust       0.79      0.74      0.76        38
-     fearful       0.75      0.79      0.77        38
-       happy       0.78      0.74      0.76        38
-     neutral       0.86      0.81      0.83        19
-         sad       0.74      0.84      0.79        38
-   surprised       0.84      0.84      0.84        38
-
-    accuracy                           0.81       285
-   macro avg       0.81      0.81      0.81       285
-weighted avg       0.81      0.81      0.81       285
-```
-
-### Streamlit UI Result Card
-```text
-+------------------------------------------+
-|  ANALYSIS COMPLETE                       |
-|                                          |
-|  😊 Happy                                |
-|  Confidence: 92.3%                       |
-+------------------------------------------+
-```
-*(Also displays a horizontal bar chart displaying probabilities for all 8 emotions).*
-
----
-
-## 📓 Google Colab Setup
-To run this on Google Colab:
-1.  Upload the directory files to your Google Drive or upload them directly to the Colab environment.
-2.  Install dependencies:
-    ```python
-    !pip install -r requirements.txt
-    ```
-3.  Train the model:
-    ```python
-    !python train.py
-    ```
-4.  To launch Streamlit on Colab, you can use `local tunneling` (e.g. `localtunnel` or `ngrok` or Streamlit's sharing):
-    ```python
-    !streamlit run app.py & npx localtunnel --port 8501
-    ```
+## 👥 Authors
+*   **Built by**: Jivesh Gupta
+*   **Program**: BCA AI & ML

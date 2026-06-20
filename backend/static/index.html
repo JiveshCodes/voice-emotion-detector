@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎙️%3C/text%3E%3C/svg%3E" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Emotion Detector AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="dark-theme">
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="navbar-logo">
+      <span class="logo-icon">🎙️</span>
+      <span class="logo-text">VOICE EMOTION DETECTOR AI</span>
+    </div>
+    <div class="navbar-controls">
+      <button id="theme-toggle-btn" class="btn-theme-toggle">☀️ Light Mode</button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <h1 class="hero-title">
+        Analyze Human Emotions Through Voice Using Artificial Intelligence
+      </h1>
+      <p class="hero-subtitle">
+        Upload your voice recording and discover emotions locally using high‑precision neural networks.
+      </p>
+    </section>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Upload & Actions -->
+      <div class="dashboard-card primary-column">
+        <h2 class="section-title">Upload Audio Sample</h2>
+        
+        <!-- Upload Dropzone -->
+        <div id="upload-dropzone" class="upload-dropzone">
+          <input type="file" id="audio-file-input" accept=".wav,.mp3" style="display: none;" />
+          
+          <div id="upload-prompt" class="upload-prompt">
+            <div class="pulse-icon">🎙️</div>
+            <h3 class="upload-title">Drag & drop your voice file here</h3>
+            <p class="upload-subtitle">or click browse to find it on your computer</p>
+            <button id="btn-browse" class="btn-browse">Browse Files</button>
+            <div class="upload-meta">
+              <span>WAV, MP3 formats supported</span>
+              <span>•</span>
+              <span>Max size 50MB</span>
+            </div>
+          </div>
+
+          <div id="file-info-container" class="file-info-container" style="display: none;">
+            <div class="file-icon-box">🎵</div>
+            <div class="file-meta">
+              <span id="file-name" class="file-name">filename.wav</span>
+              <span id="file-size" class="file-size">0.00 MB</span>
+            </div>
+            
+            <div class="audio-preview">
+              <audio id="audio-widget" controls class="audio-widget"></audio>
+            </div>
+
+            <button id="btn-remove" class="btn-remove">✕ Remove File</button>
+          </div>
+        </div>
+
+        <!-- Action Panel -->
+        <div id="actions-box" class="actions-box" style="display: none;">
+          <!-- Waveform Visualizer -->
+          <div class="waveform-visualizer">
+            <span class="waveform-title">LOCAL WAVEFORM ANALYZER</span>
+            <div class="canvas-wrapper">
+              <canvas id="waveform-canvas" width="800" height="120" class="waveform-canvas"></canvas>
+            </div>
+          </div>
+          
+          <button id="btn-analyze" class="btn-analyze">🔍 Analyze Voice Sample</button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-container" class="loading-container" style="display: none;">
+          <div class="sharp-spinner">
+            <div class="spinner-block block1"></div>
+            <div class="spinner-block block2"></div>
+            <div class="spinner-block block3"></div>
+            <div class="spinner-block block4"></div>
+          </div>
+          <p class="loading-message">Processing audio file and extracting features...</p>
+        </div>
+        
+        <!-- Error Display -->
+        <div id="error-card" class="error-card" style="display: none;">
+          <span class="error-icon">⚠️</span>
+          <span id="error-text" class="error-text">An error occurred.</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Results & Analytics -->
+      <div class="dashboard-card secondary-column">
+        <h2 class="section-title">Analysis & Insights</h2>
+        
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">📊</div>
+          <p class="empty-text">No audio sample analyzed yet.</p>
+          <p class="empty-subtext">Upload a WAV/MP3 file and click Analyze to view predictions.</p>
+        </div>
+
+        <!-- Results Dashboard -->
+        <div id="results-wrapper" class="results-wrapper" style="display: none;">
+          <!-- Result Card -->
+          <div class="result-card">
+            <div class="result-card-header">
+              <span class="badge-success">ANALYSIS COMPLETE</span>
+            </div>
+            <div class="result-card-body">
+              <div class="result-emotion-box">
+                <span id="result-emoji" class="result-emoji-large" role="img" aria-label="emotion">😐</span>
+                <span id="result-emotion" class="result-emotion-title">NEUTRAL</span>
+              </div>
+              <div class="result-meter-container">
+                <div class="result-meter-labels">
+                  <span class="label-confidence">CONFIDENCE LEVEL</span>
+                  <span id="result-confidence" class="value-confidence">0.0%</span>
+                </div>
+                <div class="meter-bg">
+                  <div id="result-meter-fill" class="meter-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom horizontal bar chart -->
+          <div class="chart-card">
+            <h3 class="chart-card-title">Emotion Probability Analytics</h3>
+            <div id="chart-bars-container" class="chart-bars-container">
+              <!-- Custom bars will be rendered here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Prediction History Log -->
+    <section id="history-section" class="history-section dashboard-card" style="display: none;">
+      <h2 class="section-title">Recent Predictions</h2>
+      <div id="history-list" class="history-list">
+        <!-- History items rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-copyright">Built by Jivesh Gupta • BCA AI & ML</p>
+    <p class="footer-sub">Voice Emotion Detector AI • 100% Local Inference</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
