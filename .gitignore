@@ -1,0 +1,26 @@
+# Datasets
+dataset/
+
+# Model artifacts
+model/
+*.h5
+*.pkl
+*.png
+
+# Python cache & build files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Editor and system files
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
