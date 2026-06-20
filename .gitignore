@@ -5,7 +5,7 @@ dataset/
 model/
 *.h5
 *.pkl
-*.png
+model/*.png
 
 # Python cache & build files
 __pycache__/
